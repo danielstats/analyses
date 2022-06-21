@@ -9,7 +9,8 @@ output:
     keep_md: TRUE
 ---
 
-```{r read-cleanup, warning = FALSE, message = FALSE}
+
+```r
 #load packages
 pacman::p_load(mosaic,ggthemes,ggsci, car, patchwork, pander,tidyverse)
 
@@ -47,8 +48,6 @@ mova <- lm(Time ~ Covariate + m_status * Experience, data = mariol, contrasts = 
 lmova <- lm(logTime ~ Covariate + m_status * Experience, data = mariol, contrasts = list(m_status = contr.sum, Experience = contr.sum))
 
 cmova <- lm(cTime ~ Covariate + m_status * Experience, data = mariol, contrasts = list(m_status = contr.sum, Experience = contr.sum))
-
-
 ```
 ## Introduction
 
@@ -109,27 +108,32 @@ It was originally intended to use the selected map as a blocking variable, but f
 
 Having collected the data, we may analyze the appropriateness of ANCOVA. We will examine a Residuals vs. Fitted plot for equal variance  and linear relationship (no noticeable patterns in the plot will show those to be true), and a QQ plot of the residuals for normal distribution (following the projected line shows this assumption):
 
-```{r diagnostic, warning = FALSE, message = FALSE}
+
+```r
 par(mfrow = c(1,2))
 cl_res(mova)
 qqPlot(mova, id = F, main = "Normality Check")
-
 ```
+
+![](Mario_files/figure-html/diagnostic-1.png)<!-- -->
 While the QQ plot looks excellent, we have some serious problems with the Residuals vs. Fitted plot, which appears to be C-shaped. Not exactly the random distribution we're looking for. However, it may be possible to salvage this data by performing a natural log() transformation. Doing so, we now examine our plots again:
 
-```{r diagnostic2, warning = FALSE, message = FALSE}
+
+```r
 par(mfrow = c(1,2))
 cl_res(lmova)
 qqPlot(lmova, id = F, main = "Normality Check")
-
 ```
+
+![](Mario_files/figure-html/diagnostic2-1.png)<!-- -->
 
 That looks much better! Now our Residuals Vs. Fitted plot and our QQ plot fall within the parameters we want and we can proceed with the analysis.
 
 #### Visualizing the Data
 
 Looking at the plot below of Log transformed time to complete each map, we can clearly see a downward trend as experience increases. However, it will be necessary to examine the results of an ANCOVA before making any claims about whether that trend is statistically significant.
-```{r logplot}
+
+```r
 t <- ggplot(mariol, aes(x = expd, y = logTime, color = as.factor(m_statusd))) + 
   geom_point() + 
   scale_color_startrek(name = "Marital Status", labels = c("Single", "Married"))  + 
@@ -139,12 +143,14 @@ t <- ggplot(mariol, aes(x = expd, y = logTime, color = as.factor(m_statusd))) +
 t + labs(title = "Are married people worse at Mario?", 
          y = "Log of time to finish level (in seconds)", 
          x = "Gaming Experience")
-
 ```
+
+![](Mario_files/figure-html/logplot-1.png)<!-- -->
 
 It is also important to remember that with the covariate adjustment, we may see a different pattern in the plot. Therefore, here is a side by side comparison of the two plots. If the covariate is very impactful, we will see a far different (probably flatter) pattern in the covariate adjusted plot.
 
-```{r clogplot}
+
+```r
 c <- ggplot(mariol, aes(x = expd, y = logcTime, color = as.factor(m_statusd))) + 
   geom_point() + 
   scale_color_startrek() + 
@@ -159,13 +165,35 @@ t <- t + labs(title = "Original Plot", y = "Log of time to finish level (in seco
 c + t
 ```
 
+![](Mario_files/figure-html/clogplot-1.png)<!-- -->
+
 It does not appear that this is the case. In fact, the pattern appears so similar that it is doubtful the covariate will have any effect upon the results of our ANCOVA shown below.
 
 #### Test Results
 
-```{r aovtable}
+
+```r
 pander(Anova(cmova, type = 3), caption = "Type III Sum of Squares")
 ```
+
+
+------------------------------------------------------------
+         &nbsp;            Sum Sq    Df   F value   Pr(>F)  
+------------------------- --------- ---- --------- ---------
+     **(Intercept)**       1042677   1     9.773    0.02607 
+
+      **Covariate**        142596    1     1.337    0.2999  
+
+      **m_status**          1386     1    0.01299   0.9137  
+
+     **Experience**        950179    2     4.453    0.07752 
+
+ **m_status:Experience**   131848    2    0.6179    0.5757  
+
+      **Residuals**        533458    5      NA        NA    
+------------------------------------------------------------
+
+Table: Type III Sum of Squares
 
 As seen in this table, there are no p-values greater than our $\alpha = .05$ and therefore, we have insufficient evidence to reject any of our null hypotheses. It is likely that removing the covariate from our ANCOVA model (and thus performing a 2 way Basic Factorial) may produce a significant main effect for experience, but this p-value wouldn't prove much more than that people who are good at Mario are good at Mario, and as a result we will not restructure the model thusly.
 

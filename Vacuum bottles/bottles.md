@@ -12,7 +12,8 @@ output:
 # {.tabset .tabset-fade}
 
 
-```{r, message = FALSE, warning = FALSE}
+
+```r
 #load packages
 pacman::p_load(pander, car, mosaic, tidyverse, ggthemes, ggbeeswarm)
 
@@ -105,20 +106,107 @@ Order was randomized for each test, with each bottle being chosen randomly and t
 
 Seen below is a table showing some summary statistics for each water bottle both by bottle and temperature, then all the collected data for perusal if so desired. Note the similar means between the Built and Hydro bottles, and that the Standard Deviation of the Control is much higher than all the others (more than double even the second highest value).
 
-```{r}
+
+```r
 pander(favstats(data = blottl, abs_tdiff ~ bottle)[c("bottle" ,"min", "median", "max", "mean", "sd","n")], caption = "Temperature differences by bottle")
+```
 
+
+-------------------------------------------------
+ bottle   min   median   max   mean     sd     n 
+-------- ----- -------- ----- ------- ------- ---
+ Built     1      3       9    4.333   3.724   6 
+
+  Ctrl    17      23     36    25.33   8.847   6 
+
+ Equate    3     6.5     12    6.833   3.971   6 
+
+ Hydro     1     4.5      8     4.5    3.146   6 
+-------------------------------------------------
+
+Table: Temperature differences by bottle
+
+```r
 favstats(data = blottl, abs_tdiff ~ treatment)[c("treatment" ,"min", "median", "max", "mean", "sd","n")] |> pander(caption = "Temperature differences by temperature")
+```
 
+
+-----------------------------------------------------
+ treatment   min   median   max   mean     sd     n  
+----------- ----- -------- ----- ------- ------- ----
+   Cold       1      3      18    6.25    6.943   12 
+
+    Hot       1      9      36    14.25   11.75   12 
+-----------------------------------------------------
+
+Table: Temperature differences by temperature
+
+```r
 pander(blottl, caption = "All the Data")
 ```
+
+
+---------------------------------------------------
+ bottle   treatment   temp_diff   temp   abs_tdiff 
+-------- ----------- ----------- ------ -----------
+ Built       Hot         -1       109        1     
+
+ Built      Cold          3        48        3     
+
+ Built       Hot         -9       101        9     
+
+ Built      Cold          1        46        1     
+
+ Built       Hot         -9       101        9     
+
+ Built      Cold          3        48        3     
+
+  Ctrl       Hot         -28       82       28     
+
+  Ctrl      Cold         17        62       17     
+
+  Ctrl       Hot         -36       74       36     
+
+  Ctrl      Cold         18        63       18     
+
+  Ctrl       Hot         -35       75       35     
+
+  Ctrl      Cold         18        63       18     
+
+ Equate      Hot         -9       101        9     
+
+ Equate     Cold          3        48        3     
+
+ Equate      Hot         -12       98       12     
+
+ Equate     Cold          4        49        4     
+
+ Equate      Hot         -10      100       10     
+
+ Equate     Cold          3        48        3     
+
+ Hydro       Hot         -7       103        7     
+
+ Hydro      Cold          2        47        2     
+
+ Hydro       Hot         -8       102        8     
+
+ Hydro      Cold          2        47        2     
+
+ Hydro       Hot         -7       103        7     
+
+ Hydro      Cold          1        46        1     
+---------------------------------------------------
+
+Table: All the Data
 
 ## Graphical Summaries
 
 Below is an interaction plot of the Actual Water Temperatures between groups with the room ambient temperature (72 ℉) as a red line. This graph is interesting because it indicates a strong difference between the Control and all other groups, as expected, but little difference between the other bottles' final temperatures. If the Hydro Flask is really better than the other bottles, we would expect to see a noticeably higher temperature retention for that bottle vs. the other two vacuum-seal units; we do not.
 
 
-```{r}
+
+```r
 ggplot(blottl, aes(y= temp, x = bottle, color = treatment)) +  
   geom_beeswarm() +
   geom_hline(yintercept = 72, color = "red", linetype = "dashed") +
@@ -129,13 +217,14 @@ ggplot(blottl, aes(y= temp, x = bottle, color = treatment)) +
        x = "Bottle", y = "End Temperature (℉)") +
   theme_clean() + theme(legend.background = element_blank(), 
                         legend.position = "bottom")
-
 ```
+
+![](bottles_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
 Examining the data this way, however, has a few disadvantages. When we look at the actual end temperatures, there will be an obvious difference between the hot and cold groups; we want to see not if hot water is hotter than cold water (knowledge bomb: it is) but rather if hot water *stays hotter* than cold water *stays colder* in each bottle. So, we will instead look at the absolute *difference* between pre- and post-test temperatures, and perform our ANOVA of those data. An updated plot is shown below:
 
-```{r}
 
+```r
 ggplot(blottl, aes(y = abs_tdiff, x = bottle, color = treatment))  +  
   geom_beeswarm() +
   stat_summary(aes(x = as.numeric(bottle)),
@@ -146,8 +235,9 @@ ggplot(blottl, aes(y = abs_tdiff, x = bottle, color = treatment))  +
   scale_color_fivethirtyeight("Treatment Group") + 
   theme_clean() + theme(legend.background = element_blank(),
                         legend.position = "bottom")
-
 ```
+
+![](bottles_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
 In this plot, the closer to 0 the y-axis gets, the better temperature retentive properties that bottle is displaying. As we can see, The Hydro Flasks and Built bottles showed the lowest absolute difference, with the Equate bottle not far behind. The Control in almost every case approached the ambient temperature, this may be better seen in the first plot.
 
@@ -155,33 +245,66 @@ In this plot, the closer to 0 the y-axis gets, the better temperature retentive 
 
 With this in mind, we will proceed to analyze the absolute difference in temperature for each bottle. To determine if the analysis we intend to perform is statistically valid, we will examine a residuals vs. fitted and a QQ plot of our data. In the first plot, we look for an obvious megaphone shape or other distinct pattern to establish whether or not the variance in our data is constant, while in the QQ plot we look for variation from the theoretical "normal" line as evidence that the data is not normally distributed. These two diagnostic plots are shown below:
 
-```{r}
+
+```r
 par(mfrow = c(1,2))
 
 cl_res(bonova)
 qqPlot(~abs_tdiff, data = blottl, id = FALSE, main = "Normality Check")
-
 ```
+
+![](bottles_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
 There are a few values at the top end of the data that fall outside of our normality line and its bounded confidence level (the blue highlighted area). With that potential skew in mind but also considering the robust nature of ANOVA, we will proceed with an analysis consider this slightly abnormal distribution in our results.
 
 An ANOVA table of the data reveals the following:
 
-```{r}
+
+```r
 summary(bonova) |> pander(caption = "Analysis of Variance Between Bottle and Absolute Difference in Temperature")
 ```
 
+
+-------------------------------------------------------------------
+        &nbsp;          Df   Sum Sq   Mean Sq   F value    Pr(>F)  
+---------------------- ---- -------- --------- --------- ----------
+      **bottle**        3     1844     614.5     108.4    7.62e-11 
+
+    **treatment**       1     384       384      67.76    3.82e-07 
+
+ **bottle:treatment**   3    114.3     38.11     6.725    0.003805 
+
+    **Residuals**       16   90.67     5.667      NA         NA    
+-------------------------------------------------------------------
+
+Table: Analysis of Variance Between Bottle and Absolute Difference in Temperature
+
 With p-values far below the level of significance ($\alpha = .05$), the bottle and water temperature are both found to be significant factors. Far more important, however, is that the interaction between the two, seen as "bottle:treatment" on the table, has a p-value of $.0038$, also below the level of significance. Some of these values were expected, as having a Control will obviously affect the bottle factor's significance. We will also analyze the three non-Control bottles to see if there is a significant difference between them:
 
-```{r}
-pander(summary(bonova_nc), caption = "ANOVA without Control bottle")
 
+```r
+pander(summary(bonova_nc), caption = "ANOVA without Control bottle")
 ```
+
+
+--------------------------------------------------------------------
+        &nbsp;          Df   Sum Sq   Mean Sq   F value    Pr(>F)   
+---------------------- ---- -------- --------- --------- -----------
+      **bottle**        2    23.44     11.72     2.705     0.1072   
+
+    **treatment**       1    138.9     138.9     32.05    0.0001054 
+
+ **bottle:treatment**   2    6.778     3.389    0.7821     0.4794   
+
+    **Residuals**       12     52      4.333      NA         NA     
+--------------------------------------------------------------------
+
+Table: ANOVA without Control bottle
 
 This ANOVA table shows some very interesting information. Without the control, we lose significance for the Bottle type and the interaction, retaining only a significant difference in the Hot/Cold groups. Examining the plot again without the Control, this is plain to see:
 
-```{r}
 
+```r
 ggplot(blottl_nc, aes(y = abs_tdiff, x = bottle, color = treatment)) +
   geom_beeswarm() +
   labs(title = "Hot/Cold, No control",
@@ -194,6 +317,8 @@ ggplot(blottl_nc, aes(y = abs_tdiff, x = bottle, color = treatment)) +
     stat_summary(aes(x = as.numeric(bottle)),
               fun = mean, geom = "line")
 ```
+
+![](bottles_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
 
 Because there is no longer any significant difference between the specific bottles, we will avoid performing multiple comparisons, as there are only two groups and we therefore know that the Hot treatment results in greater temperature loss than the Cold treatment group.
 

@@ -10,24 +10,7 @@ output:
 <br>
 
 
-```{r, include=FALSE}
-#load relevant packages
-library(mosaic)
-library(tidyverse)
-library(car)
-library(pander)
-library(ggthemes)
 
-#read in csv file
-CarPrices <- read_csv("data/carprices.csv")
-#remove outlying Cadillac model
-CarPrices <- filter(CarPrices, Model != "XLR-V8")
-CarPrices <- CarPrices %>% mutate( Cylinders = as.factor(Cylinder))
-
-#make Linear Model from data
-cyl_lm <- lm(Price ~ Mileage * Cylinders, data = CarPrices)
-
-```
 
 
 ## Background
@@ -96,7 +79,8 @@ Lastly, a Q-Q plot of error terms will allow us to determine if error terms are 
 
 ### Diagnostic plots
 
-```{r, message = FALSE, warning = FALSE, fig.height= 3}
+
+```r
 #set plot settings so all three diagnostic plots are on one line
 par(mfrow = c(1,3))
 #Residuals vs. fitted plot for linearity/constant variance,
@@ -107,6 +91,11 @@ qqPlot(cyl_lm, id = FALSE, main = "Q-Q Plot of Error Terms", cex = 1)
 plot(cyl_lm$residuals)
 #add title to Residuals vs. order plot
 mtext(text = "Residuals vs. Order")
+```
+
+![](carprices_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+```r
 #reset plot settings
 par(mfrow = c(1,1))
 ```
@@ -116,7 +105,8 @@ As can be seen, there are serious problems with the Residuals vs. Fitted plot. T
 
 ### Graphical Summary
 
-```{r, fig.align= 'center'}
+
+```r
 #make plot of data
 ggplot(CarPrices, aes(Mileage, Price, color = as.factor(Cylinder))) + 
   #turn ggplot object into a scatterplot
@@ -135,17 +125,44 @@ ggplot(CarPrices, aes(Mileage, Price, color = as.factor(Cylinder))) +
        y = "Price (USD)")
 ```
 
+<img src="carprices_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
+
   
 As can be seen in the plot, the majority of the 6 cylinder and 8 cylinder cars are grouped together fairly closely, while the 4 cylinder vehicles appear to have two groupings with prices approximately between 10000-20000 and 25000-35000. This causes the 4 cylinder data to almost sandwich the 6 cylinder vehicles in the plot, and they have similar slopes as well. This would probably indicate that their y intercepts are not significantly different. However, the 8 Cylinder data is grouped (for the most part) distinctly above the rest of the data, this would indicate that its y-intercept will be significantly different than the baseline's. Furthermore, while the slope change between 4 and 6 Cylinders is minor, the projected slope of the 8 Cylinder group is far steeper and would indicate that 8 Cylinder cars actually hold their value worse. 
 
   
 ### Hypothesis Test
 
-```{r}
 
+```r
 pander(summary(cyl_lm), caption = "Linear Regression of Price according to Mileage and Cylinder count")
-
 ```
+
+
+----------------------------------------------------------------------
+         &nbsp;           Estimate   Std. Error   t value   Pr(>|t|)  
+------------------------ ---------- ------------ --------- -----------
+    **(Intercept)**        19439       870.6       22.33    5.981e-86 
+
+      **Mileage**         -0.07839    0.04007     -1.957     0.05075  
+
+     **Cylinders6**         3812        1322       2.883    0.004047  
+
+     **Cylinders8**        24316        1960       12.41    2.05e-32  
+
+ **Mileage:Cylinders6**   -0.08363     0.0619     -1.351     0.1771   
+
+ **Mileage:Cylinders8**   -0.3005     0.09135     -3.289     0.00105  
+----------------------------------------------------------------------
+
+
+-------------------------------------------------------------
+ Observations   Residual Std. Error   $R^2$   Adjusted $R^2$ 
+-------------- --------------------- ------- ----------------
+     794               6549           0.442       0.4385     
+-------------------------------------------------------------
+
+Table: Linear Regression of Price according to Mileage and Cylinder count
 
 As could be inferred from the plot of the data, the estimated slope adjustment for the 6 Cylinder group is very small (-.08), while the adjustment for 8 Cylinders is relatively much larger (-.3). The same is true for their P values, $P = .1771 \ \text{and} \ P = .00105$ respectively, indicating that the 8 Cylinder group's slope adjustment is statistically significant while the 6 Cylinder group's is not $(\alpha = .05)$. Additionally, the Mileage by itself has a $P = .051$, just over the level of significance.
 

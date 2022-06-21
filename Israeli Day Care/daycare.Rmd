@@ -4,6 +4,7 @@ output:
   html_document:
     theme: cerulean
     code_folding: hide
+    keep_md: true
 ---
 
 
@@ -17,7 +18,7 @@ library(ggbeeswarm)
 
 
 ## Wide data from original article:
-late <- read.csv("../../Data/late.csv", header=TRUE) 
+late <- read.csv("data/daycare.csv", header=TRUE) 
 
 ## Change to "long" data for use in R:
 Late <- pivot_longer(late, #Start with wide data set late
