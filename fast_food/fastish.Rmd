@@ -1,0 +1,29 @@
+---
+title: "The Fastest Food in Rexburg"
+author: "Daniel Bagley"
+output: 
+  html_document:
+    code_folding: hide
+    theme: paper
+    floating_toc: TRUE
+    keep_md: TRUE
+---
+
+```{r, warning = FALSE, message = FALSE }
+pacman::p_load(mosaic, tidyverse)
+rxbrg <- read_csv("data/data6_28.csv")
+fast_ova <- aov(converted_sec ~ Location, data = rxbrg)
+fast_ova <- aov(converted_sec ~ Location + items, data = rxbrg)
+```
+
+## Background
+
+I have lived in Rexburg, Idaho for almost 4 years. In that time, restaurants have come and gone; the old Wendy's was torn down and they started building another one; so-called "dirty" soda shops have become an epidemic in the Intermountain West (2 locations of "Pick Me Up", A place called Sodavine, 3 ), and 
+
+
+```{r, warning = FALSE, message = FALSE}
+ggplot(rxbrg, aes(y = converted_sec, x = items)) + geom_point(aes(color = Location)) + geom_smooth(method = "lm", se = FALSE)
+```
+
+
+
