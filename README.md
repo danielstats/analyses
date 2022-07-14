@@ -1,2 +1,9 @@
 # analyses
-Some statistical analyses I performed either as part of a class project or personal interests. The .md files are ugly because they are created from .Rmd files intended for html viewing. So I recommend downloading the .html files and viewing them as knitr intended, but the .md files give an overview of the graphics involved.
+Some statistical analyses performed either as part of a class or for personal enjoyment. 
+
+The .md files look awful because they are from .Rmd files which I intended to be knitted into html files. So the .mds exist only to give a (very) rough idea of what each subfolder is about, if you want to read it the way it is meant to be read download the html file. 
+
+Start with these:
+- Ricks Building Bottle Filler
+- Video Games
+- Multiple Line Linear Regression
