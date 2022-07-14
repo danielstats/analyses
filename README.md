@@ -6,4 +6,4 @@ The .md files look awful because they are from .Rmd files which I intended to be
 Start with these:
 - Ricks Building Bottle Filler
 - Video Games
-- Multiple Line Linear Regression
+- Hymns
