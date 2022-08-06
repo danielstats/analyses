@@ -1,0 +1,214 @@
+---
+title: "Does the Bottle Matter?"
+author: "Daniel Bagley"
+date: "10/28/2021"
+format: 
+  gfm:
+    execute: 
+      echo: false
+
+---
+
+
+# {.tabset .tabset-fade}
+
+
+```{r, message = FALSE, warning = FALSE}
+#load packages
+pacman::p_load(pander, car, mosaic, tidyverse, ggthemes, ggbeeswarm)
+
+cl_res <- function(aovout){
+  temp <- max(abs(aovout$residuals))
+  plot(aovout$fitted.values, aovout$residuals, xlab = "Fitted Values",
+       ylab = "Residuals", main = "Equal Variance Check", pch = 16, 
+      ylim = c(-temp, temp))
+  abline(h=0, col = "gray", lty = 2)
+}
+
+#read in and prepare data
+bottle <- read_csv("data/bottles.csv", show_col_types = F)
+blottl <- pivot_longer(bottle, cols = c(Hot, Cold), names_to = c("treatment"), values_to = "temp_diff")
+blottl <- mutate(blottl, temp = if_else(temp_diff < 0, temp_diff+110, temp_diff +45))
+blottl$treatment <- as.factor(blottl$treatment)
+blottl$abs_tdiff <- abs(blottl$temp_diff)
+blottl_nc <- dplyr::filter(blottl, bottle != "Ctrl")
+blottl$bottle <- as.factor(blottl$bottle)
+blottl_nc$bottle <- as.factor(blottl_nc$bottle)
+#create anova models
+bonova <- aov(abs_tdiff ~ bottle*treatment, data = blottl, contrasts = list(bottle = contr.sum, treatment = contr.sum))
+
+bonova_nc <- aov(abs_tdiff ~ bottle*treatment, data = blottl_nc, contrasts = list(bottle = contr.sum, treatment = contr.sum))
+#write new csv file of cleaned data
+# write_csv(blottl, "blottle.csv")
+```
+
+## Introduction
+
+To many youths in the Intermountain west, a trendy water bottle seems to be the very pinnacle of "making it" amongst your peers. However, a question arises: while these more expensive vacuum-sealing bottles are definitely cooler, are they really cooler? Or in other words, do they perform the function of a water bottle any better than one which can be purchased for half or even a quarter of the same price? Eschewing the cultural value thereof in favor of statistical evidence, we will analyze the temperature retentive properties of 3 water bottles and 1 control (a glass jar) to determine whether there is a difference in temperature retention between the control and any of the bottles; and if so whether there is a significant difference between the three bottles' temperature retention. We will analyze these questions by measuring the relative difference in water temperature before and after a 4 hour period. We will test both hot and cold water to determine if one bottle is better at retaining hot or cold temperatures. Formally stated, our questions are these: Does a more expensive water bottle retain water temperature better? Is it easier for a vacuum-seal water bottle to retain the temperature of hot or cold water? And, finally, Is there a difference in the temperature retention between hot/cold liquid depending on bottle? 
+
+### Hypotheses
+Does a more expensive water bottle retain water temperature better?
+
+$$
+  H_0: \alpha_{Built} = \alpha_{Ctrl} =  \alpha_{Equate} = \alpha_{Hydro} = 0 \\ 
+  H_a: \alpha_i \ne 0 \ \text{for at least one } i \in \{Built,\  Control, \ Equate, \ Hydro\} 
+$$
+
+Does a vacuum-seal bottle better retain temperature of hot or cold water?
+$$
+  H_0: \beta_H = \beta_C = 0 \\
+  H_a: \beta_i \ne 0 \text{ for at least one } i \in \{H = Hot, \ C= Cold\}
+$$
+
+Is there a difference in the temperature retention between hot/cold liquid depending on bottle? 
+
+$$
+H_0: \alpha\beta_{ij} = 0 \text{ for all } i, j \\
+H_a: \alpha\beta_{ij} \ne 0 \text{ for at least one } i, j
+$$
+
+#### Level of Significance 
+Level of significance $\alpha = .05$ will be used for the duration of this analysis.
+
+
+## Methods
+
+#### Materials
+
+For this analysis, 4 water bottles were chosen. First, a control consisting of a glass mason jar, a Built brand vacuum-seal bottle, an Equate brand vacuum-seal bottle, and a Hydro Flask brand vacuum-seal bottle. All the containers were sized at 32 ounces, and each except the control had a screw-on lid. 
+
+Water was collected from the kitchen faucet and sourced from the City of Rexburg's Municipal water supply. To obtain the needed temperatures, water dispensed from the tap was heated in a microwave or placed in a refrigerator to cool, then added to the relevant bottle (which was the ambient room temperature).
+
+#### Measurements
+
+Every test was performed in an apartment with an ambient temperature averaging 72 degrees, at randomly chosen times of day (between 8am and 10pm) to prevent a potential effect due to time of day. Furthermore, each bottle was placed in the same location on the kitchen table during testing and left there for the duration of the test each time.
+
+To balance the necessities of limited resources with a desire for accuracy and to provide an effective test environment, each test was performed for exactly 4 hours, with the water in the bottle being raised or lowered to the target temperature and then immediately sealed and a timer being set for that duration.
+
+Measurements were taken through a Thermoworks IRK-2 Infrared thermometer with a Thermoworks K-449 Industrial probe. The probe was fully immersed in the bottle, stirred for a few seconds, then let sit until the reading stabilized (about 15 seconds). This thermocouple is accurate to within 2.7 degrees Fahrenheit, and data should be interpreted thusly.
+
+#### Conditions
+
+Testing conditions were applied by either heating or cooling the water to a specified temperature chosen before testing. For the Hot condition, 110 degrees Fahrenheit was chosen because most warm drinks are served at a temperature of at least 100 degrees, but it becomes painful to drink liquid hotter than approximately 140 degrees. Therefore, 110 degrees seems a good approximate temperature, if also an arbitrary one. 
+
+For the Cold condition, 45 degrees Fahrenheit was chosen as a temperature that is slightly warmer than most refrigerators but also colder than most taps (the tap used approximated 55 degrees Fahrenheit at its coldest setting) and hence a good middle choice between the two. 
+
+In both conditions, the water was cooled/heated to the desired temperature INSIDE the bottle to prevent heat loss/gain from stirring/pouring, then the bottle was immediately sealed.
+
+#### Response
+
+After the 4-hour timer elapsed, the bottle was opened and immediately measured for the current water temperature using the same procedure described above. The water was then dumped out of the bottle and the bottle was allowed to return to ambient room temperature before performing another test. 
+
+Order was randomized for each test, with each bottle being chosen randomly and then filled. Each bottle was tested in staggered periods of 5-10 minutes (depending on how long it took to get the water to the correct temperature), and Hot/Cold condition was chosen semirandomly (random save that equal numbers of each condition had to be tested) before each test.
+
+
+## The Data
+
+Seen below is a table showing some summary statistics for each water bottle both by bottle and temperature, then all the collected data for perusal if so desired. Note the similar means between the Built and Hydro bottles, and that the Standard Deviation of the Control is much higher than all the others (more than double even the second highest value).
+
+```{r}
+pander(favstats(data = blottl, abs_tdiff ~ bottle)[c("bottle" ,"min", "median", "max", "mean", "sd","n")], caption = "Temperature differences by bottle")
+
+favstats(data = blottl, abs_tdiff ~ treatment)[c("treatment" ,"min", "median", "max", "mean", "sd","n")] |> pander(caption = "Temperature differences by temperature")
+
+pander(blottl, caption = "All the Data")
+```
+
+## Graphical Summaries
+
+Below is an interaction plot of the Actual Water Temperatures between groups with the room ambient temperature (72 ℉) as a red line. This graph is interesting because it indicates a strong difference between the Control and all other groups, as expected, but little difference between the other bottles' final temperatures. If the Hydro Flask is really better than the other bottles, we would expect to see a noticeably higher temperature retention for that bottle vs. the other two vacuum-seal units; we do not.
+
+
+```{r}
+ggplot(blottl, aes(y= temp, x = bottle, color = treatment)) +  
+  geom_beeswarm() +
+  geom_hline(yintercept = 72, color = "red", linetype = "dashed") +
+  stat_summary(aes(x = as.numeric(bottle)),
+               fun = mean, geom = "line") +
+  scale_color_fivethirtyeight("Treatment Group") + 
+  labs(title = "Is there a difference between vacuum-seal bottles?",
+       x = "Bottle", y = "End Temperature (℉)") +
+  theme_clean() + theme(legend.background = element_blank(), 
+                        legend.position = "bottom")
+
+```
+
+Examining the data this way, however, has a few disadvantages. When we look at the actual end temperatures, there will be an obvious difference between the hot and cold groups; we want to see not if hot water is hotter than cold water (knowledge bomb: it is) but rather if hot water *stays hotter* than cold water *stays colder* in each bottle. So, we will instead look at the absolute *difference* between pre- and post-test temperatures, and perform our ANOVA of those data. An updated plot is shown below:
+
+```{r}
+
+ggplot(blottl, aes(y = abs_tdiff, x = bottle, color = treatment))  +  
+  geom_beeswarm() +
+  stat_summary(aes(x = as.numeric(bottle)),
+               fun = mean, geom = "line") + 
+  labs(title = "Analyzing absolute difference shows potential interaction",
+       x = "Bottle",
+       y = "Absolute Difference in Temperature (℉)") +
+  scale_color_fivethirtyeight("Treatment Group") + 
+  theme_clean() + theme(legend.background = element_blank(),
+                        legend.position = "bottom")
+
+```
+
+In this plot, the closer to 0 the y-axis gets, the better temperature retentive properties that bottle is displaying. As we can see, The Hydro Flasks and Built bottles showed the lowest absolute difference, with the Equate bottle not far behind. The Control in almost every case approached the ambient temperature, this may be better seen in the first plot.
+
+## Analysis
+
+With this in mind, we will proceed to analyze the absolute difference in temperature for each bottle. To determine if the analysis we intend to perform is statistically valid, we will examine a residuals vs. fitted and a QQ plot of our data. In the first plot, we look for an obvious megaphone shape or other distinct pattern to establish whether or not the variance in our data is constant, while in the QQ plot we look for variation from the theoretical "normal" line as evidence that the data is not normally distributed. These two diagnostic plots are shown below:
+
+```{r}
+par(mfrow = c(1,2))
+
+cl_res(bonova)
+qqPlot(~abs_tdiff, data = blottl, id = FALSE, main = "Normality Check")
+
+```
+
+There are a few values at the top end of the data that fall outside of our normality line and its bounded confidence level (the blue highlighted area). With that potential skew in mind but also considering the robust nature of ANOVA, we will proceed with an analysis consider this slightly abnormal distribution in our results.
+
+An ANOVA table of the data reveals the following:
+
+```{r}
+summary(bonova) |> pander(caption = "Analysis of Variance Between Bottle and Absolute Difference in Temperature")
+```
+
+With p-values far below the level of significance ($\alpha = .05$), the bottle and water temperature are both found to be significant factors. Far more important, however, is that the interaction between the two, seen as "bottle:treatment" on the table, has a p-value of $.0038$, also below the level of significance. Some of these values were expected, as having a Control will obviously affect the bottle factor's significance. We will also analyze the three non-Control bottles to see if there is a significant difference between them:
+
+```{r}
+pander(summary(bonova_nc), caption = "ANOVA without Control bottle")
+
+```
+
+This ANOVA table shows some very interesting information. Without the control, we lose significance for the Bottle type and the interaction, retaining only a significant difference in the Hot/Cold groups. Examining the plot again without the Control, this is plain to see:
+
+```{r}
+
+ggplot(blottl_nc, aes(y = abs_tdiff, x = bottle, color = treatment)) +
+  geom_beeswarm() +
+  labs(title = "Hot/Cold, No control",
+       x = "Bottle",
+       y = "Absolute Difference in Temperature (℉)") +
+  scale_color_fivethirtyeight("Treatment Group") + 
+  theme_clean() + 
+  theme(legend.background = element_blank(),
+        legend.position = "bottom") +
+    stat_summary(aes(x = as.numeric(bottle)),
+              fun = mean, geom = "line")
+```
+
+Because there is no longer any significant difference between the specific bottles, we will avoid performing multiple comparisons, as there are only two groups and we therefore know that the Hot treatment results in greater temperature loss than the Cold treatment group.
+
+## Conclusion
+
+The ANOVA performed with the data collected has shown that we have sufficient evidence to reject the hypotheses that vacuum-seal bottles have no effect on temperature retention vs. an open contatiner and that vacuum-seal bottles retain cold and hot water to the same degree; as well as some marginal evidence to reject the hypothesis that the specific vacuum-bottle chosen will have no effect on hot/cold water temperature retention. 
+
+It is important to remember that the measurement device used in this test was accurate to within approximately 3 degrees; that means any differences less than 3 degrees, even if found to be significant, could be entirely due to measurement error. However, the significant differences found had effect sizes between 5 and 8 degrees, outside of our measurement margin of error. Therefore, we can conclude that the bottles really do retain the temperature of Hot water worse than they do for cold water. It would be interesting to study these bottles in comparison to some sold specifically as hot-liquid thermoses, suited for that purpose. While it is theoretically true that a vacuum shouldn't let cold or hot water disperse its temperature, it appears that the execution of these bottles is oriented more towards keeping cold water cold than hot water hot; most likely because most people (at least in this culture) prefer to drink their water cold. 
+
+Lastly, while the Equate bottle had the worst Hot water temperature retention of the 3 bottles tested, there was no significance found inside the Hot treatment groups of the bottles, only between Hot and Cold. In other words, we found no evidence that the Hydro flask is actually better at keeping liquid the same temperature as the two other bottles tested. Therefore, from a solely economic standpoint, it is the recommendation of this researcher that if one is interested in a vacuum-seal bottle, the price and not the brand should be the primary consideration of the customer when determining which one to purchase.
+
+
+
+
+
+
+
