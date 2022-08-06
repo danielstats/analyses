@@ -65,7 +65,7 @@ The story of this data is somewhat complex and involves a months-long journey sp
 
 ![](./images/raw_data.png)
 
-```{r rangle, message = FALSE, warning = FALSE, cache = TRUE}
+```{r rangle, message = FALSE, warning = FALSE, cache = TRUE, echo = TRUE}
 #read in data
 hims <- rio::import("data/music_quantified.xlsx") |> 
   select(s_note,a_note,t_note,b_note) |> 

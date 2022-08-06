@@ -95,6 +95,49 @@ of the file looked like:
 
 ![](./images/raw_data.png)
 
+``` r
+#read in data
+hims <- rio::import("data/music_quantified.xlsx") |> 
+  select(s_note,a_note,t_note,b_note) |> 
+  mutate(row = seq_along(s_note)) 
+
+#extract indices of hymn titles
+bob2 <- str_which(hims$s_note, "[:alpha:]")
+names <- rep(NA, 365)
+for (i in 1:365 ) {
+  names[i] <- hims[bob2[i],1]
+}
+hymnss <- bind_cols(tibble(hymn = bob2),tibble(name = names))
+#create grouping variable using floor_val function for all rows
+himm <- hims |> 
+  mutate(hymn = map_dbl(row, floor_val, x = bob2))
+#pull out first and last note of every hymn, separate by part and tidy
+hymns <- himm |> 
+    na.omit() |> 
+  group_by(hymn) |> 
+  summarise(s_first = as.numeric(na.omit(s_note)[2]),
+            s_last = as.numeric(na.omit(s_note)[length(na.omit(s_note))]),
+            a_first = na.omit(a_note)[2],
+            a_last = na.omit(a_note)[length(na.omit(a_note))],
+            t_first = na.omit(t_note)[2],
+            t_last = na.omit(t_note)[length(na.omit(t_note))],
+            b_first = na.omit(b_note[2]),
+            b_last = na.omit(b_note)[length(na.omit(b_note))]) |> 
+  pivot_longer(values_to = "Note", 
+               names_to = "Part", 
+               cols = c(s_first:b_last)) |> 
+  separate(col = Part, into = c("part", "position"), sep = "_") |> 
+  pivot_wider(names_from = position, values_from =  Note) |> 
+  mutate(part = factor(case_when(part == "s" ~ "Soprano",
+                          part == "a" ~ "Alto",
+                          part == "t" ~ "Tenor",
+                          part == "b" ~ "Bass"), 
+                       levels = c("Soprano", "Alto", "Tenor", "Bass")),
+         diff = first - last, #create numerical of differences between first/last note
+         same = diff == 0) |> #create logical of whether first/last note are the same
+  left_join(hymnss) #attach hymn names to the dataset
+```
+
 ### Overview of the Data
 
 With cleaned and wrangled data, we are left with a smaller dataset than
