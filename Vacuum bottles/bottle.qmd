@@ -111,7 +111,6 @@ pander(favstats(data = blottl, abs_tdiff ~ bottle)[c("bottle" ,"min", "median", 
 
 favstats(data = blottl, abs_tdiff ~ treatment)[c("treatment" ,"min", "median", "max", "mean", "sd","n")] |> pander(caption = "Temperature differences by temperature")
 
-pander(blottl, caption = "All the Data")
 ```
 
 ## Graphical Summaries
