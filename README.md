@@ -1,7 +1,7 @@
 # analyses
 Some statistical analyses performed either as part of a class or for personal enjoyment. 
 
-The .md files look awful because they are from .Rmd files which I intended to be knitted into html files. So the .mds exist only to give a (very) rough idea of what each subfolder is about, if you want to read it the way it is meant to be read download the html file. 
+Pretty much all of these were written origninally as RMarkdown documents which were published as html pages. Because html pages cannot be shown on the web by Github, I've taken the launch of Quarto as an opportunity to translate my .Rmd files into .qmd files, which can be formatted as Git-Flavored Markdown (GFM) and consequently display a much more polished document inside of Github. *View the GFM .md files in each subfolder.*
 
 Start with these:
 - Ricks Building Bottle Filler
