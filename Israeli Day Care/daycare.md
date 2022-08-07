@@ -62,10 +62,6 @@ $$
 
 A level of significance of $\alpha = 0.05$ will be used for this study.
 
-<!--End your background before here.-->
-<!--Click the little black arrow to 
-the left to expand/hide these next sections.-->
-
 ## Analysis
 
 ### Diagnostic plots
