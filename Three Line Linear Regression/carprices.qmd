@@ -5,7 +5,6 @@ format:
   gfm:
     execute: 
       echo: false
-
 ---
 
 <br>

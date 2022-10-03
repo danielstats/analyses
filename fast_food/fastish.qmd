@@ -1,0 +1,73 @@
+---
+title: "The Fastest Food in Rexburg"
+author: "Daniel Bagley"
+format: 
+  html: 
+    code-fold: true
+    code-tools: true
+    theme: paper
+    toc: true
+  gfm:
+    execute: 
+      echo: false
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r}
+#| label: read
+#| warning: false
+#| message: false
+
+
+pacman::p_load(mosaic, tidyverse, googlesheets4)
+rxbrg <- read_sheet("13QF3EtgpuXck780AGcrouy3WSmZIJkHA_Pf4CMhRkyE")
+fast_ova <- aov(converted_sec ~ Location, data = rxbrg, contrasts = list(Location = contr.sum))
+
+```
+
+## Background
+
+I have lived in Rexburg, Idaho for almost 4 years. In that time, restaurants have come and gone: the old Wendy's was torn down and they started building another one, so-called "dirty" soda shops have become an epidemic in the Intermountain West (2 locations of "Pick Me Up", 2 more "Sodavine"s, 3 "Redneck Soda"s, etc. all in Rexburg), and the population has continued to grow. As a busy college student, I like to save time where possible, and the first place to lose minutes is mealtime. I wish to eat as fast as possible so that I can have more time to do statistical analyses instead of my homework. So the question arises, which fast food restaurant in Rexburg is fastest? Assuming no drive time because pretty much every restaurant is the same distance from campus (and to avoid having to control for any more variables), we will measure the seconds it takes to receive my food after ordering, in the drive through. Stated more formally, we will investigate whether the mean drive-through wait time is significantly lower (or higher, so I know what to avoid) for any fast food chain in Rexburg, ID. We state our hypotheses as follows: 
+
+$$
+  H_0:  \alpha_{\text{M}} = \alpha_{\text{S}} = \alpha_{\text{T}} = \alpha_{\text{ W}} = 0 \\
+$$
+$$
+  H_a: \alpha_{\text{i}} \neq 0 \text{ for at least one } i \in \{ \text{M = McDonald's, S = Sonic, T = Taco Bell, W = Wendy's} \}
+$$
+
+The level of significance for this analysis will be $\alpha = 0.05$.
+
+## Methodology
+
+Having previously noted that wait times vary widely when purchasing food in the store, and because the drive through is ostensibly designed to be quicker than parking and entering the store, it was determined that measurements in this study would be narrowly focused on drive through only. Therefore, each data point was recorded in the drive through, in the same car, and the time of day was carefully noted to guard against potential time-based effects. 
+
+
+## Analysis
+
+### Visualizations
+
+```{r}
+#| boxplots
+#| message: false
+
+ggplot(rxbrg, aes(y = converted_sec, fill = Location)) + 
+  geom_boxplot() +
+  theme_gdocs()
+
+```
+
+```{r}
+#| message: false
+#| warning: false
+
+ggplot(rxbrg, aes(y = converted_sec, x = items)) +
+  geom_point(aes(color = Location)) + 
+  geom_smooth(method = "lm", se = FALSE) + 
+  labs(title = "Does Buying More Food Mean a Longer Wait Time?")
+```
+
+
+
