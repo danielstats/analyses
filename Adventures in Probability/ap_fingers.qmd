@@ -1,0 +1,68 @@
+---
+title: "Adventures in Probability: How many Fingers?"
+author: "Daniel Bagley"
+date: "19 November 2022"
+format: 
+  html:
+    self-contained: true
+    theme: materia
+    code-fold: true
+    mainfont: math
+    code-tools: true
+    toc: true
+  gfm:
+    code_fold: true
+    code_tools: true
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+
+pacman::p_load(tidyverse)
+
+list_guess <- function(n) {
+  list <- sample(1:n)
+  
+  for(i in 1:length(list)) {
+    guess <- sample(list)
+    if(list[1] == guess[1]) {
+      return(n - length(list) + 1)
+    } else{
+      list <- list[-1]
+
+    }
+  }
+}
+
+```
+
+
+
+```{r}
+
+cronk <- rep(c(10,20,30), 10)
+map_dbl(.x = cronk, .f = list_guess,)
+
+n <- 10
+jo <- rep(NA, n)
+
+for(i in 1:n){
+  jo[i] <- list_guess(10)
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
