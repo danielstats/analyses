@@ -10,6 +10,7 @@ format:
     code-tools: true
     toc: true
   gfm:
+    self-contained: true
     code_fold: true
     code_tools: true
 editor: source
@@ -103,6 +104,31 @@ ggplot(halves_scores, aes(y = half_2, x = half_1)) +
 
 ```
 
+
+We will additionally calculate Cronbach's $\alpha$, having removed the "Try scale" items (which will be addressed later) to ensure unidimensionality(hopefully):
+
+```{r}
+#| warning: false
+#| message: false
+
+cron_bin <- cart_bin |> 
+  select(-did_best, -group, -score, -einstein, -panda, -color_red, -computer_science)
+psych::alpha(cron_bin)
+
+```
+
+As we will see later, there are several items who correlate so poorly that more of the BYU students than the Rexburgians answered correctly. The Alpha calculation indicates several items we might remove. If we take out the ones that it indicates, we are left with the following, drastically shorter test:
+
+```{r}
+#| warning: false
+#| message: false
+cron_bin2 <- cron_bin |> 
+  select(-housing, -owned_by, -population, -snowballs, -harvest_dummy, -NCMO, -farming, -hold_music)
+psych::alpha(cron_bin2)
+
+```
+
+as we can see, the $\alpha$ and $\lambda$ coefficients are much higher, despite a shorter test.
 
 ### "Didn't try/pay attention" Scale
 
