@@ -1,0 +1,14 @@
+---
+title: "Untitled"
+format: html
+---
+
+
+$$
+  H_0:  \text{Bob's your uncle} = \mu
+$$
+
+
+
+
+

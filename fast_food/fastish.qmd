@@ -65,8 +65,8 @@ ggplot(rxbrg, aes(y = converted_sec, fill = Location)) +
 
 ggplot(rxbrg, aes(y = converted_sec, x = items)) +
   geom_point(aes(color = Location)) + 
-  geom_smooth(method = "lm", se = FALSE) + 
-  labs(title = "Does Buying More Food Mean a Longer Wait Time?")
+  geom_smooth(aes(color = Location), method = "lm", se = FALSE) + 
+  labs(title = "Does Buying More Food Mean a Longer Wait Time?")  
 ```
 
 
