@@ -18,24 +18,38 @@ editor_options:
   chunk_output_type: console
 ---
 
+
+How many guesses does it take (on average) to guess the number of fingers someone is holding up, if they only have 10 fingers?
+
 ```{r}
 
 pacman::p_load(tidyverse)
+
+check_guess <- function(n, list, guess) {
+  if(list[1] == guess){
+    return(n - length(list) + 1)
+  } else{
+    list <- list[-1]
+    if(length(list) == 0) {return(n)}
+  }
+}
 
 list_guess <- function(n) {
   list <- sample(1:n)
   
   for(i in 1:length(list)) {
-    guess <- sample(list)
-    if(list[1] == guess[1]) {
-      return(n - length(list) + 1)
-    } else{
-      list <- list[-1]
-
-    }
+    guess <- head(sample(list),1)
+    
   }
 }
 
+
+
+bob <- tibble("num" = rep(c(5,10,20), 100),
+                  "val" = map_dbl(num, .f = list_guess))
+
+
+favstats(val ~ as.factor(num), data = bob)
 ```
 
 
