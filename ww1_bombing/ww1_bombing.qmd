@@ -7,6 +7,7 @@ format:
     self-contained: true
     theme: minty
     code-fold: true
+    code-line-numbers: true
     mainfont: math
     code-tools: true
     toc: true
@@ -24,12 +25,40 @@ editor_options:
 #| warning: false
 #| message: false
 
-pacman::p_load(mosaic, lubridate, tidyverse)
+pacman::p_load(mosaic, lubridate, httr2, jsonlite, tidyverse)
+Google_API_key <- "AIzaSyBfezqfhiLnf_tDQc5td54JUOCMFzFDwH4"
+FS_App_key <- "DJKT-DH2K-V9WN-M9RB-LMMV-4477-9HSJ-LZ8G"
+FS_token <- "b0-mF04Nwu5NvR.mQ2tmYgEzRH" #not sure if this thing expires or not
+
+gen_FS_API_key <- function(client_id){
+  ip_address <- system("ipconfig getifaddr en0", intern = TRUE)
+  req <- httr2::request("https://identbeta.familysearch.org/cis-web/oauth2/v3/token") |> 
+    httr2::req_headers(Accept = "application/json") |> 
+    httr2::req_body_form(grant_type= "unauthenticated_session", 
+                       ip_address = ip_address, 
+                       client_id = client_id)
+  req_perform(req)
+}
+
+geocode_latlong <- function(address, Google_API_key){
+  address_c <- str_replace_all(address, "\\s", "%20")
+  geocode_api <- "https://maps.googleapis.com/maps/api/geocode/json?address="
+  output <- jsonlite::fromJSON(str_c(geocode_api, address_c, "&key=", API_key))
+  return(output$results$geometry$location)
+}
+
 
 date_clean <- function(date) { #janky function to parse posixct dates from the data
   day <- str_sub(date, end = 2)
   month <- str_sub(date, start = 3, end = 5)
   year <- str_sub(date, start = -4)
+  monat <- clean_month(month)
+  moment <- str_c(day, monat, year)
+  parse_date(moment, format = "%d%m%Y" )
+}
+
+clean_month <- function(month) {
+  #turns month abbreviations into 2 digit indicators for POSIXCT to parse
   monat <-case_when(month == "Jan" ~ "01",
                     month == "Feb" ~ "02",
                     month == "Mar" ~ "03",
@@ -42,9 +71,8 @@ date_clean <- function(date) { #janky function to parse posixct dates from the d
                     month == "Oct" ~ "10",
                     month == "Nov" ~ "11",
                     month == "Dec" ~ "12")
-  moment <- str_c(day, monat, year)
-  parse_date(moment, format = "%d%m%Y" )
-  }
+  return(monat)
+}
 
 all_bombs <- read_csv("data/western_front_bombing.csv") |> 
   #add index column for editing
@@ -84,8 +112,6 @@ all_bombs <- read_csv("data/western_front_bombing.csv") |>
 
 
 
-
-
   #we only want non-summary reports of allied squadrons
 bombs <- filter(all_bombs, !is.na(sqn), !(summary_or_comments == "TRUE")) 
 # Sum NAs in each column
@@ -106,8 +132,8 @@ bombs |>
   filter(!is.na(tgt_type_exp), !target_type == "P" ) |> 
 ggplot(aes(y = bomb_wgt_lb, x = date, color = tgt_type_exp)) +
   geom_point() +
-  facet_wrap(facets = vars(tgt_type_exp), scales = "free_y") +
-  theme(legend.position = "none",
+  facet_wrap(facets = vars(ship_type), scales = "free_y") +
+  theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 70, vjust = 0.6, hjust = 0.5))
 
 ggplot(bombs, aes(y = bomb_wgt_lb, fill = ship_type)) +
@@ -115,6 +141,21 @@ ggplot(bombs, aes(y = bomb_wgt_lb, fill = ship_type)) +
 
 ggplot(bombs, aes(y = bombs_per_ship, fill = ship_type)) + 
   geom_boxplot()
+
+bombs_per_month <- bombs |> 
+  group_by(month, year) |> 
+  summarize(count = n(),
+            weight = sum(bomb_wgt_lb, na.rm = TRUE),
+            num_bombs = sum(num_bombs, na.rm = TRUE),
+            num_ships = sum(ships_launched, na.rm = TRUE)) |> 
+  mutate(month = clean_month(month),
+         date = parse_date(str_c(month, year, sep = ""), format = "%m%Y")) |> 
+  filter(!is.na(date), !date == "1918-11-01")
+
+ggplot(bombs_per_month, aes(x = date, y = count)) + 
+  geom_col() +
+  geom_smooth()
+
 
 ```
 
@@ -142,6 +183,70 @@ ggplot(breguet_arm, aes(y = bomb_wgt_lb, x = ships_launched)) +
 big_bombs <- bombs |> 
   arrange(-bomb_wgt_lb) |> 
   head(50)
+
+```
+
+
+```{r}
+#| label: What is up with Dirigibles?
+
+dirg <- bombs |> 
+  filter(ship_type == "Dirg.")
+
+
+ggplot(dirg, aes(y = bombs_per_ship, x = date)) + 
+  geom_point()
+```
+
+
+
+
+```{r}
+pacman::p_load(httr2)
+
+targets <- bombs$target_location |> unique()
+
+
+
+western_front <- yourip |> filter(NAME %in% c("France", "Germany", "Switzerland", "Belgium"))
+
+ggplot(western_front) + 
+  geom_sf(aes(fill = NAME)) 
+
+standard_place <- function(place, FS_acc_token){
+  place_string = str_c("name:", place, "~+parentId:280")
+  req <- request("https://beta.familysearch.org/platform/places/search") |> 
+    req_headers(Accept = "application/json",
+                Authorization = str_c("Bearer ", FS_acc_token)) |> 
+    req_url_query(q = place_string)
+  #req_dry_run(req)
+  resp_body_json(req_perform(req))
+}
+
+FS_placesearch_first <- function(FS_json){
+  FS_json$entries[[1]]$content$gedcomx$places[[1]]
+}
+
+FS_placesearch_names <- function(FS_json){
+  len <- length(FS_json$entries)
+  names <- rep(NA, len)
+  for(i in 1:len) {
+    names[i] <- FS_json$entries[[i]]$content$gedcomx$places[[1]]$names[[1]]$value
+  }
+  names
+}
+
+avjson$entries[[1]]$content$gedcomx$places[[1]]$names[[1]]$value
+
+```
+
+
+
+
+
+```{r}
+
+
 
 ```
 

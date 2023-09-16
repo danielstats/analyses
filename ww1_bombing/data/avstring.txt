@@ -1,0 +1,358 @@
+{
+  "subtitle" : "Results of searching for places.",
+  "title" : "Place Search Results",
+  "entries" : [ {
+    "content" : {
+      "gedcomx" : {
+        "places" : [ {
+          "id" : "11835458",
+          "lang" : "fr",
+          "type" : "https://beta.familysearch.org/platform/places/types/201",
+          "temporalDescription" : {
+            "formal" : "+2016/"
+          },
+          "latitude" : 50.538,
+          "longitude" : 3.0811,
+          "jurisdiction" : {
+            "resource" : "https://beta.familysearch.org/platform/places/description/10743182",
+            "resourceId" : "10743182"
+          },
+          "links" : {
+            "description" : {
+              "href" : "https://beta.familysearch.org/platform/places/description/11835458?flag=fsh"
+            }
+          },
+          "identifiers" : {
+            "http://gedcomx.org/Primary" : [ "https://beta.familysearch.org/platform/places/4073941" ],
+            "$" : [ "urn:uuid:6d7a3708-536e-4e53-aa43-2cde06430960" ]
+          },
+          "names" : [ {
+            "lang" : "en",
+            "value" : "Avelin, Nord, Hauts-de-France, France"
+          } ],
+          "display" : {
+            "name" : "Avelin",
+            "fullName" : "Avelin, Nord, Hauts-de-France, France",
+            "type" : "Municipality"
+          },
+          "placeDescriptionInfo" : [ {
+            "zoomLevel" : 13
+          } ]
+        }, {
+          "id" : "10743182",
+          "lang" : "fr",
+          "type" : "https://beta.familysearch.org/platform/places/types/215",
+          "place" : {
+            "resource" : "https://beta.familysearch.org/platform/places/1937564",
+            "resourceId" : "1937564"
+          },
+          "jurisdiction" : {
+            "resource" : "#10743181",
+            "resourceId" : "10743181"
+          },
+          "links" : {
+            "place-type" : {
+              "href" : "https://beta.familysearch.org/platform/places/types/215?flag=fsh"
+            },
+            "description" : {
+              "href" : "https://beta.familysearch.org/platform/places/description/10743182?flag=fsh"
+            }
+          },
+          "identifiers" : {
+            "http://gedcomx.org/Primary" : [ "https://beta.familysearch.org/platform/places/1937564" ],
+            "$" : [ "urn:uuid:2da0277c-79fd-42df-be72-042e2e0f901f" ]
+          },
+          "names" : [ {
+            "lang" : "fr",
+            "value" : "Nord"
+          } ]
+        }, {
+          "id" : "10743181",
+          "lang" : "fr",
+          "type" : "https://beta.familysearch.org/platform/places/types/337",
+          "place" : {
+            "resource" : "https://beta.familysearch.org/platform/places/9328189",
+            "resourceId" : "9328189"
+          },
+          "jurisdiction" : {
+            "resource" : "#204",
+            "resourceId" : "204"
+          },
+          "links" : {
+            "place-type" : {
+              "href" : "https://beta.familysearch.org/platform/places/types/337?flag=fsh"
+            },
+            "description" : {
+              "href" : "https://beta.familysearch.org/platform/places/description/10743181?flag=fsh"
+            }
+          },
+          "identifiers" : {
+            "http://gedcomx.org/Primary" : [ "https://beta.familysearch.org/platform/places/9328189" ],
+            "$" : [ "urn:uuid:5767dfce-5c00-497e-9ce4-ea6a84521449" ]
+          },
+          "names" : [ {
+            "lang" : "fr",
+            "value" : "Hauts-de-France"
+          } ]
+        }, {
+          "id" : "204",
+          "lang" : "fr",
+          "type" : "https://beta.familysearch.org/platform/places/types/580",
+          "place" : {
+            "resource" : "https://beta.familysearch.org/platform/places/1927089",
+            "resourceId" : "1927089"
+          },
+          "links" : {
+            "place-type" : {
+              "href" : "https://beta.familysearch.org/platform/places/types/580?flag=fsh"
+            },
+            "description" : {
+              "href" : "https://beta.familysearch.org/platform/places/description/204?flag=fsh"
+            }
+          },
+          "identifiers" : {
+            "http://gedcomx.org/Primary" : [ "https://beta.familysearch.org/platform/places/1927089" ],
+            "$" : [ "urn:uuid:ff3f5c4a-29c4-40bc-8111-d9a6518ff2ad" ]
+          },
+          "names" : [ {
+            "lang" : "fr",
+            "value" : "France"
+          } ]
+        } ]
+      }
+    },
+    "id" : "11835458",
+    "score" : 75.0,
+    "links" : {
+      "description" : {
+        "href" : "https://beta.familysearch.org/platform/places/description/11835458?flag=fsh"
+      }
+    }
+  }, {
+    "content" : {
+      "gedcomx" : {
+        "places" : [ {
+          "id" : "6825029",
+          "lang" : "fr",
+          "type" : "https://beta.familysearch.org/platform/places/types/201",
+          "temporalDescription" : {
+            "formal" : "+1972/+2016"
+          },
+          "latitude" : 50.538,
+          "longitude" : 3.0811,
+          "jurisdiction" : {
+            "resource" : "https://beta.familysearch.org/platform/places/description/442110",
+            "resourceId" : "442110"
+          },
+          "links" : {
+            "description" : {
+              "href" : "https://beta.familysearch.org/platform/places/description/6825029?flag=fsh"
+            }
+          },
+          "identifiers" : {
+            "http://gedcomx.org/Primary" : [ "https://beta.familysearch.org/platform/places/4073941" ],
+            "$" : [ "urn:uuid:11e6126e-f8be-4e85-8e2e-0594506a825d" ]
+          },
+          "names" : [ {
+            "lang" : "en",
+            "value" : "Avelin, Nord, Nord-Pas-de-Calais, France"
+          } ],
+          "display" : {
+            "name" : "Avelin",
+            "fullName" : "Avelin, Nord, Nord-Pas-de-Calais, France",
+            "type" : "Municipality"
+          },
+          "placeDescriptionInfo" : [ {
+            "zoomLevel" : 13
+          } ]
+        }, {
+          "id" : "442110",
+          "lang" : "fr",
+          "type" : "https://beta.familysearch.org/platform/places/types/215",
+          "place" : {
+            "resource" : "https://beta.familysearch.org/platform/places/1937564",
+            "resourceId" : "1937564"
+          },
+          "jurisdiction" : {
+            "resource" : "#2735",
+            "resourceId" : "2735"
+          },
+          "links" : {
+            "place-type" : {
+              "href" : "https://beta.familysearch.org/platform/places/types/215?flag=fsh"
+            },
+            "description" : {
+              "href" : "https://beta.familysearch.org/platform/places/description/442110?flag=fsh"
+            }
+          },
+          "identifiers" : {
+            "http://gedcomx.org/Primary" : [ "https://beta.familysearch.org/platform/places/1937564" ],
+            "$" : [ "urn:uuid:6a159d36-1e12-4292-8aa4-ae7791173bb0" ]
+          },
+          "names" : [ {
+            "lang" : "fr",
+            "value" : "Nord"
+          } ]
+        }, {
+          "id" : "2735",
+          "lang" : "fr",
+          "type" : "https://beta.familysearch.org/platform/places/types/337",
+          "place" : {
+            "resource" : "https://beta.familysearch.org/platform/places/1928966",
+            "resourceId" : "1928966"
+          },
+          "jurisdiction" : {
+            "resource" : "#204",
+            "resourceId" : "204"
+          },
+          "links" : {
+            "place-type" : {
+              "href" : "https://beta.familysearch.org/platform/places/types/337?flag=fsh"
+            },
+            "description" : {
+              "href" : "https://beta.familysearch.org/platform/places/description/2735?flag=fsh"
+            }
+          },
+          "identifiers" : {
+            "http://gedcomx.org/Primary" : [ "https://beta.familysearch.org/platform/places/1928966" ],
+            "$" : [ "urn:uuid:7af82d86-5e77-457c-b612-6b1c7019f25a" ]
+          },
+          "names" : [ {
+            "lang" : "fr",
+            "value" : "Nord-Pas-de-Calais"
+          } ]
+        }, {
+          "id" : "204",
+          "lang" : "fr",
+          "type" : "https://beta.familysearch.org/platform/places/types/580",
+          "place" : {
+            "resource" : "https://beta.familysearch.org/platform/places/1927089",
+            "resourceId" : "1927089"
+          },
+          "links" : {
+            "place-type" : {
+              "href" : "https://beta.familysearch.org/platform/places/types/580?flag=fsh"
+            },
+            "description" : {
+              "href" : "https://beta.familysearch.org/platform/places/description/204?flag=fsh"
+            }
+          },
+          "identifiers" : {
+            "http://gedcomx.org/Primary" : [ "https://beta.familysearch.org/platform/places/1927089" ],
+            "$" : [ "urn:uuid:ff3f5c4a-29c4-40bc-8111-d9a6518ff2ad" ]
+          },
+          "names" : [ {
+            "lang" : "fr",
+            "value" : "France"
+          } ]
+        } ]
+      }
+    },
+    "id" : "6825029",
+    "score" : 66.0,
+    "links" : {
+      "description" : {
+        "href" : "https://beta.familysearch.org/platform/places/description/6825029?flag=fsh"
+      }
+    }
+  }, {
+    "content" : {
+      "gedcomx" : {
+        "places" : [ {
+          "id" : "10554941",
+          "lang" : "fr",
+          "type" : "https://beta.familysearch.org/platform/places/types/201",
+          "temporalDescription" : {
+            "formal" : "+1790/+1972"
+          },
+          "latitude" : 50.53801,
+          "longitude" : 3.08114,
+          "jurisdiction" : {
+            "resource" : "https://beta.familysearch.org/platform/places/description/10554901",
+            "resourceId" : "10554901"
+          },
+          "links" : {
+            "description" : {
+              "href" : "https://beta.familysearch.org/platform/places/description/10554941?flag=fsh"
+            }
+          },
+          "identifiers" : {
+            "http://gedcomx.org/Primary" : [ "https://beta.familysearch.org/platform/places/4073941" ],
+            "$" : [ "urn:uuid:58722a54-7091-45cb-a2d1-480189aa0aaf" ]
+          },
+          "names" : [ {
+            "lang" : "en",
+            "value" : "Avelin, Nord, France"
+          } ],
+          "display" : {
+            "name" : "Avelin",
+            "fullName" : "Avelin, Nord, France",
+            "type" : "Municipality"
+          },
+          "placeDescriptionInfo" : [ {
+            "zoomLevel" : 13
+          } ]
+        }, {
+          "id" : "10554901",
+          "lang" : "fr",
+          "type" : "https://beta.familysearch.org/platform/places/types/215",
+          "place" : {
+            "resource" : "https://beta.familysearch.org/platform/places/1937564",
+            "resourceId" : "1937564"
+          },
+          "jurisdiction" : {
+            "resource" : "#204",
+            "resourceId" : "204"
+          },
+          "links" : {
+            "place-type" : {
+              "href" : "https://beta.familysearch.org/platform/places/types/215?flag=fsh"
+            },
+            "description" : {
+              "href" : "https://beta.familysearch.org/platform/places/description/10554901?flag=fsh"
+            }
+          },
+          "identifiers" : {
+            "http://gedcomx.org/Primary" : [ "https://beta.familysearch.org/platform/places/1937564" ],
+            "$" : [ "urn:uuid:fa17a625-37c3-4054-8756-31b57f1075c7" ]
+          },
+          "names" : [ {
+            "lang" : "fr",
+            "value" : "Nord"
+          } ]
+        }, {
+          "id" : "204",
+          "lang" : "fr",
+          "type" : "https://beta.familysearch.org/platform/places/types/580",
+          "place" : {
+            "resource" : "https://beta.familysearch.org/platform/places/1927089",
+            "resourceId" : "1927089"
+          },
+          "links" : {
+            "place-type" : {
+              "href" : "https://beta.familysearch.org/platform/places/types/580?flag=fsh"
+            },
+            "description" : {
+              "href" : "https://beta.familysearch.org/platform/places/description/204?flag=fsh"
+            }
+          },
+          "identifiers" : {
+            "http://gedcomx.org/Primary" : [ "https://beta.familysearch.org/platform/places/1927089" ],
+            "$" : [ "urn:uuid:ff3f5c4a-29c4-40bc-8111-d9a6518ff2ad" ]
+          },
+          "names" : [ {
+            "lang" : "fr",
+            "value" : "France"
+          } ]
+        } ]
+      }
+    },
+    "id" : "10554941",
+    "score" : 66.0,
+    "links" : {
+      "description" : {
+        "href" : "https://beta.familysearch.org/platform/places/description/10554941?flag=fsh"
+      }
+    }
+  } ]
+}
