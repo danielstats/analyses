@@ -26,9 +26,7 @@ editor_options:
 #| message: false
 
 pacman::p_load(mosaic, lubridate, httr2, jsonlite, tidyverse)
-Google_API_key <- "AIzaSyBfezqfhiLnf_tDQc5td54JUOCMFzFDwH4"
-FS_App_key <- "DJKT-DH2K-V9WN-M9RB-LMMV-4477-9HSJ-LZ8G"
-FS_token <- "b0-mF04Nwu5NvR.mQ2tmYgEzRH" #not sure if this thing expires or not
+
 
 gen_FS_API_key <- function(client_id){
   ip_address <- system("ipconfig getifaddr en0", intern = TRUE)
