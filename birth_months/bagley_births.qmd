@@ -1,0 +1,42 @@
+---
+title: "Bagley Births"
+author: "Daniel Bagley"
+format: 
+  html:
+    self-contained: true
+    theme: minty
+    code-fold: true
+    code-line-numbers: true
+    mainfont: math
+    code-tools: true
+    toc: true
+    fig-align: "center"
+    fig-width: 6
+    fig-asp: 0.618
+  gfm:
+    code_fold: true
+    code_tools: true
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r}
+
+rio::import("https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/DVS/natality/Nat2022us.zip")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+

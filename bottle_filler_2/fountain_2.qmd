@@ -1,0 +1,51 @@
+---
+title: "Revisiting Is the Bottle Filler in the Ricks Building actually faster than the fountain?"
+subtitle: "Exciting new developments in the field of water fountain analysis!"
+author: "Daniel Bagley"
+date: "January 19, 2024"
+format:  
+  gfm:
+    execution:
+      echo: fenced
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+::: {.panel-tabset}
+
+## Introduction
+
+In 2022, I wrote an analysis of my university's math department to determine which of two water fountains were faster. Nearly two years later, the university heard my cries and replaced the slower fountain with a new fountain and bottle filler attachment, pictured below. Unlike the former fountain, this bottle filler was not merely a new spout transforming the extant fountain but a **separate device** with an independent, motion-detection based activation. In other words, the fountain does not need to be activated for the water bottle filler to work. To examine the various questions this change predicates, I will perform another study of the water fountains in the Ricks building of BYU-I. 
+
+The Mathematics Department at Brigham Young University-Idaho is housed in the second floor of the Thomas E. Ricks Building (referred to as the 'Ricks building' hereafter) of the university's campus in Rexburg, Idaho. Next to the department offices is a pair of drinking fountains. These are the fountains most accessible to students in mathematics courses, which are on the other side of the hall from the department offices. Of the pair, one fountain was converted to a bottle filler during the onset of the COVID-19 pandemic. During the semester break between December 15 2023 and January 8 2024, the right-hand fountain was replaced with a water-bottle filler and standard spout construction.
+
+
+## Methods
+The methodology used in the first experiment is retained in this experiment, with some modifications. Unlike the first experiment, I do not expect to collect $n = 20$ observations from each fountain. Rather, considering the very small sample variance I observed in the first experiment, I will sample only 5 from each fountain and increase the sample size should the results prove uncertain, as I did last time. 
+
+Further, as I observed no time-based effect in the first study, I will not perform an additional analysis to determine the presence of time-based effects upon the filler time. This will allow us to further focus on the differences between conditions.
+
+There are several questions which can reasonably be posed by the interested water bottle user at this junction. First and primarily, which fountain condition is fastest for the filling of my water bottle? Second and nearly as important, why? There are, as I observe them, five possible conditions under which I might endeavor to fill my water bottle. The first three are obvious: the left-hand fountain, the right-hand fountain, and the bottle-filler. While it seems unlikely that a purpose-built bottle filling device should perform worse than a general purpose water fountain spout, we will collect several samples to determine this fact. Of particular note is the fact that there have been, as far as I am aware, no changes to the left-hand fountain since the first study was completed. Therefore, we would expect to see no change whatsoever in the times collected from that fountain. If we do see significant differences, it will indicate a potential change in either the water flow rate of the fountain or a difference in our collection methodologies (which would be quite problematic). 
+
+The other two conditions are less obvious, and pertain to the question of multiple concurrent fountain users. If two people wish to use the water fountain at once, say one to drink with their mouth and the other to fill a bottle, will the bottle filling speed of the various stations be affected by this use? Note that I said only two conditions, but there are three stations. I will not study the effect of using the bottle filler while the left-hand fountain is active; this seems needlessly wasteful of water. However, I will run the bottle filler while the right-hand fountain is active, and the right-hand fountain while the left-hand fountain is active. If both of those conditions show a significant change in times, I will also examine the excluded sixth condition, and possibly their reciprocals.
+
+So then, we will examine 5 states of bottle-filling to answer several questions:
+
+Which fountain condition is fastest to fill my water bottle?
+
+Does the water bottle filler behave differently when the right-hand fountain is active?
+
+Does the right-hand fountain behave differently when the left-hand fountain is active?
+
+Has the time to fill my bottle from the left-hand station changed?
+
+
+:::
+
+
+
+
+
+
+
