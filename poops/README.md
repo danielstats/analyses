@@ -1,0 +1,271 @@
+# Poop Analysis
+Daniel Bagley
+2026-01-05
+
+## Introduction
+
+When I was a child, I was introduced to the classic children’s book
+*Everyone Poops* by Taro Gomi. As you might imagine, the primary message
+of this book is that all creatures defecate; presumably this book is
+intended for young children learning to potty in a toilet instead of a
+diaper. Despite not learning about the title until many years after I
+had mastered bladder control, this book does raise one interesting
+question for adults as well as children: **If everyone poops, how much
+do they poop?**
+
+It was with this question in mind that I began inquiring of others
+(friends, family, and strangers have all been asked) to collect
+anectodal data regarding standard human pooping habits. As a result of
+these inquiries, I began to suspect that I poop more often than my
+coworkers and family members. Therefore, I determined that a
+quantitative study was required and, for the entirety of 2025, recorded
+each time I defecated. This analysis will attempt to determine the
+essential characteristics of my personal pooping habits. Data was
+recorded after each bowel movement on a physical whiteboard and in an
+online spreadsheet (Google Sheet) to provide two sources of data. The
+two sources were harmonized after each week and the whiteboard erased.
+This allowed for error-checking which proved necessary on Jan 20 and
+September 1, both of which had 3 whiteboard-indicated poops but only 2
+on the spreadsheet.
+
+``` r
+pacman::p_load(tidyverse, googlesheets4, 
+               ggthemes,latex2exp)
+
+url <- "https://docs.google.com/spreadsheets/d/1-4ZyW7nfctkvv_q9eDDJivb3zpi1Wey6b1ORxDq8-G0/edit?gid=0#gid=0"
+
+poop <-read_sheet(url, col_types = "cic") |> 
+  mutate(date = parse_date_time(date, orders = "m/d/Y"),
+         poop_cum_sum = cumsum(poops),
+         poop_pareto = poop_cum_sum / sum(poops),
+         idx = 1:length(poops),
+         poop_month = month(date),
+         day_of_month = mday(date)) |> 
+  filter(date < parse_date_time("2026-01-01", orders = "Y-m-d")) #ignore data outside of 2025
+
+first_of_month <- poop |> 
+  mutate(day_year = yday(date)) |>
+  filter(day_of_month == 1)
+
+
+total_poops <- sum(poop$poops)
+
+month_breaks <- first_of_month$day_year
+
+five_poop <- poop |> 
+  filter(poops == 5) 
+
+around_five <- five_poop |> 
+  mutate(plus_3 = idx + 3,
+         plus_2 = idx + 2,
+         plus_1 = idx + 1,
+         minus_3 = idx - 3,
+         minus_2 = idx - 2,
+         minus_1 = idx - 1,
+         incident = 1:n()) |> 
+  pivot_longer(cols = c("plus_3", "plus_2", "plus_1",
+                        "idx", 
+                        "minus_1", "minus_2", "minus_3"), values_to = "index") |> 
+  select(pattern_group = name, idx = index, incident) |> 
+  left_join(poop, by = "idx") |> 
+  mutate(pattern_index = case_when(pattern_group == "minus_3" ~ -3,
+                                   pattern_group == "minus_2" ~ -2,
+                                   pattern_group == "minus_1" ~ -1,
+                                   pattern_group == "idx" ~ 0,
+                                   pattern_group == "plus_1" ~ 1,
+                                   pattern_group == "plus_2" ~ 2,
+                                   pattern_group == "plus_3" ~ 3))
+```
+
+## Visualizing the Year’s Poops
+
+We will first examine a plot of all poops over the year to see if any
+obvious patterns emerge. While it may be the case that early
+poop-tracking (Jan and Feb esp.) was somewhat error-prone due to
+under-reporting when pooping in an unfamiliar location where the
+tracking board whas unavailable, it is still odd to note that of only 5
+days throughout the year wherein 5 poops were recorded, 3 of those days
+occurred in the last 2 months of the year. Also note that despite 22
+days of 1 poop only, there are no recorded 0-poop days.
+
+``` r
+poop |> 
+  ggplot(aes(y = poops, x = idx)) +
+    geom_area(aes(y = 6, fill = factor(poop_month)), alpha = .77) +
+    geom_point() +
+    labs(title = "2025 All Poops",
+       y = "Poops per day",
+       x = "Date") +
+    scale_fill_grey(start = 0.8, end = 0.6) +
+    scale_x_continuous(breaks = month_breaks, 
+                       labels = c("Jan", "Feb", "Mar", 
+                                  "Apr", "May", "Jun", 
+                                  "Jul", "Aug", "Sep", 
+                                  "Oct", "Nov", "Dec")) +
+    theme(legend.position = "none")
+```
+
+![](poop_files/figure-commonmark/poop_point_chart-1.png)
+
+For a simpler presentation of the number of poops per day irrespective
+of date, consider this table:
+
+``` r
+mosaic::favstats(poops ~ tracker, data = poop) |> 
+  select(Poops = mean, n = n) |> pander::pander(caption = "Poops Per Day")
+```
+
+| Poops |  n  |
+|:-----:|:---:|
+|   1   | 22  |
+|   2   | 155 |
+|   3   | 143 |
+|   4   | 40  |
+|   5   |  5  |
+
+Poops Per Day
+
+Note that 2 poops was most common, while 3 poops was nearly as common.
+4, 1 and 5 in that order were much less common. Let us examine another
+summary of the poops per day:
+
+``` r
+per_day_fav <- mosaic::favstats(poop$poops)[-9] #remove "missing" because no values are missing
+per_day_fav |> pander::pander()
+```
+
+| min | Q1  | median | Q3  | max | mean  |   sd   |  n  |
+|:---:|:---:|:------:|:---:|:---:|:-----:|:------:|:---:|
+|  1  |  2  |   3    |  3  |  5  | 2.592 | 0.8157 | 365 |
+
+With an average of 2.59, it seems that an emperical distribution of
+poops per day is centered around 2 and 3, with a slight right skew.
+
+## The 1000-Poop Year
+
+Based on the total number of poops throughout the year and the human
+tendency to prefer “nice, round numbers”, we will compare the actual
+year-total poops to a theoretical 1000-poop year to determine how close
+to 1000 poops I came and whether it is possible I may achieve that
+number of poops in a subsequent year. Let us visualize the cumulative
+poop total over the year in comparison to a projected poop slope which
+would lead to accumulating 1000 total poops for the year:
+
+### Poop Pareto
+
+``` r
+poop |> 
+  ggplot(aes(y = poop_cum_sum, x = idx)) +
+    geom_area(aes(y = 1000, fill = factor(poop_month)), alpha = .77) +
+    stat_function(fun = function(x) (1000 / 365) * x, 
+                  linetype = "5141", linewidth = 1.2, xlim = c(0,365)) +
+    geom_line(color = "saddlebrown", linewidth = 1.2) +
+    
+    labs(title = "Actual Poops vs. 1000-Poop Rate, 2025",
+         subtitle = "Total Poops: 946",
+         y = "Total Poops (Cumulative)",
+         x = "Month") +
+    scale_fill_grey(start = 0.8, end = 0.6) +
+    scale_x_continuous(breaks = month_breaks, 
+                       labels = c("Jan", "Feb", "Mar", 
+                                  "Apr", "May", "Jun", 
+                                  "Jul", "Aug", "Sep", 
+                                  "Oct", "Nov", "Dec")) +
+    theme(legend.position = "none")
+```
+
+![](poop_files/figure-commonmark/poop_pareto-1.png)
+
+Though using a cumulative sum obviously violates the assumption of
+independence, the slope of a poop-per-day linear regression is still
+useful information (the variance of the model will be highly
+underestimated due to the autocorrelated nature of a cumulative sum).
+
+To determine if a 1000-Poop year is statistically likely given the
+observed value of 946, we will analyze the required poops per day
+$\frac{1000}{365} \approx 2.74$ against the sample of 365 observed daily
+poops:
+
+``` r
+poop_mean <- mean(poop$poops)
+
+mean_label <-TeX(r"( $\bar{x} = 2.59$)")
+
+ggplot(poop, aes(x = poops)) + 
+  geom_histogram(fill = "saddlebrown", color = "black", binwidth = 1) +
+  labs(title = "Distribution of Poops in 2025",
+       x = "Poops per Day",
+       y = "Instances during 2025") +
+  geom_vline(xintercept = poop_mean, color = "skyblue", linewidth = 1.5) +
+  geom_vline(xintercept = (1000/365), color = "firebrick", linewidth = 1.5) +
+  annotate(geom = "label", x = poop_mean, y = 50, 
+           label = mean_label, text.color = "black", fill = "skyblue") +
+  annotate(geom = "label", x = (1000/365), y = 75, 
+           label = "1000-Poop Year\nAverage", text.color = "black", fill = "firebrick")
+```
+
+![](poop_files/figure-commonmark/empirical_dist-1.png)
+
+From the visualization, it seems that the sample mean poops per day is
+not far from the required poops per day to achieve the 1000-Poop year. A
+t-test will further elucidate. We set level of significance
+$\alpha = 0.05$ and due to large sample size assume the Central Limit
+Theorem applies to this sample. We may now proceed with a t-Test:
+
+### 1000-Poop Year Average Poops Per Day 1-Sample t-Test
+
+``` r
+t.test(poop$poops, mu = 1000/365) |> 
+  pander::pander()
+```
+
+| Test statistic | df  |      P value      | Alternative hypothesis | mean of x |
+|:--------------:|:---:|:-----------------:|:----------------------:|:---------:|
+|     -3.465     | 364 | 0.000593 \* \* \* |       two.sided        |   2.592   |
+
+One Sample t-test: `poop$poops`
+
+While the two values seem rather close together, given the large sample
+size and small variance of the sample, we must conclude that if my
+current pooping habits do not change drastically (ie, 3- and 4-poop days
+become more common than 2-poop days), I am unlikely to achieve a
+1000-Poop year.
+
+## Five Poop Days
+
+As a last matter of curiosity, it is intriguing that of all 365 days in
+the year, only 5 featured a 5-poop day. Perhaps these seminal defecation
+events provide an interesting pattern. Here is a visual of the 5-poop
+days’ surrounding data:
+
+``` r
+ggplot(around_five, aes(x = pattern_index, y = poops, 
+                        linewidth = incident, linetype = factor(incident), 
+                        color = factor(incident))) +
+  geom_line(alpha = 0.77) +
+  labs(title = "Five-Poop Incident Surrounding Data",
+       x = "Days before/after 5-poop day",
+       y = "Poops per day") +
+  scale_linewidth_continuous(range = c(1,2)) +
+  theme(legend.position = "none")
+```
+
+![](poop_files/figure-commonmark/five_poop_graph-1.png)
+
+While a naive analysis might predict that poop-per-day values
+surrounding 5-poop days would be lower than the average (1- or even
+0-poop days before/after a 5-poop day), this is not observed in the
+data.
+
+## Conclusion
+
+While 2025’s Defecation research initiative yielded interesting results,
+there is still much to plumb in the study of Poops-per-day. Further
+research may seek to further quantify pooping trends by availing the
+researcher of before/after weigh-ins and qualitative assessments of size
+as well as ratings according to the Bristol Stool Chart. However, the
+primary goal of this analysis, to determine a baseline of my pooping
+habits, has been a success. While a 1000-Poop year is not likely at
+current defecatory rates, an increase in the consumption of natural
+laxatives (prunes and blueberries have been suggested) may facilitate
+that goal.
